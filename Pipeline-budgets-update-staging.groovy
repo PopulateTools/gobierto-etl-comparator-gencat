@@ -6,28 +6,28 @@ pipeline {
         RAILS_ENV="staging"
         ELASTICSEARCH_URL = "http://localhost:9200"
         BUDGETS_COMPARATOR_GENCAT = "/var/www/gobierto-budgets-comparator-gencat-staging/current/"
-        POPULATE_DATA_SCRIPTS = "/var/www/populate-data-indicators/private_data/gobierto_budgets_comparator/gencat/"
+        COMPARATOR_GENCAT_ETL_OPERATIONS = "/var/www/gobierto-etl-comparator-gencat/current/operations/gobierto-budgets/"
         GOBIERTO_ETL_UTILS = "/var/www/gobierto-etl-utils/current/"
     }
     stages {
-        stage("Extract/Load > Update budgets forecast since 31/12/2017") {
+        stage("Extract/Load > Update budgets forecast since 31/12/2016") {
             steps {
-                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; bin/rails runner ${POPULATE_DATA_SCRIPTS}budgets_forecast/update.rb 2017-12-31"
+                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; bin/rails runner ${COMPARATOR_GENCAT_ETL_OPERATIONS}budgets_forecast/update.rb 2016-12-31"
             }
         }
-        stage("Extract/Load > Update budgets execution since 31/12/2017") {
+        stage("Extract/Load > Update budgets execution since 31/12/2016") {
             steps {
-                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; bin/rails runner ${POPULATE_DATA_SCRIPTS}budgets_execution/update.rb 2017-12-31"
+                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; bin/rails runner ${COMPARATOR_GENCAT_ETL_OPERATIONS}budgets_execution/update.rb 2016-12-31"
             }
         }
-        stage("Transform/Load > Update total budgets for 2017-2018 forecast data") {
+        stage("Transform/Load > Update total budgets for 2016-2018 forecast data") {
             steps {
-                sh "cd ${GOBIERTO_ETL_UTILS}operations/gobierto_budgets/update_total_budget/; ./run.rb "2017 2018" ${BUDGETS_COMPARATOR_GENCAT}scanned_organizations_ids.update.txt"
+                sh "cd ${GOBIERTO_ETL_UTILS}operations/gobierto_budgets/update_total_budget/; ./run.rb '2016 2017 2018' ${BUDGETS_COMPARATOR_GENCAT}scanned_organizations_ids.update.txt"
             }
         }
-        stage("Transform/Load > Update total budgets for 2017-2018 execution data") {
+        stage("Transform/Load > Update total budgets for 2016-2018 execution data") {
             steps {
-                sh "cd ${GOBIERTO_ETL_UTILS}operations/gobierto_budgets/update_total_budget; ./run.rb "2017 2018" ${BUDGETS_COMPARATOR_GENCAT}scanned_organizations_ids.update_execution.txt"
+                sh "cd ${GOBIERTO_ETL_UTILS}operations/gobierto_budgets/update_total_budget; ./run.rb '2016 2017 2018' ${BUDGETS_COMPARATOR_GENCAT}scanned_organizations_ids.update_execution.txt"
             }
         }
     }
