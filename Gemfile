@@ -8,6 +8,8 @@ gem "json"
 gem "rake"
 gem "gobierto_data", git: "https://github.com/PopulateTools/gobierto_data.git"
 gem "soda-ruby", "~> 0.2.24", require: "soda"
+gem "nokogiri"
+gem "aws-sdk"
 
 group :development do
   gem "byebug"

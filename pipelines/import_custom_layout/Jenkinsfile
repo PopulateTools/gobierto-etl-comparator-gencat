@@ -1,0 +1,33 @@
+email = "popu-servers+jenkins@populate.tools "
+pipeline {
+    agent any
+    environment {
+        // TODO
+    }
+    stages {
+        stage('Extract > Download layout') {
+            steps {
+               // TODO
+            }
+        }
+        stage('Transform > Generate templates') {
+            steps {
+                // TODO
+            }
+        }
+        stage('Load > Upload layout files to S3') {
+            steps {
+                // TODO
+            }
+        }
+    }
+    // post {
+    //     failure {
+    //         echo 'This will run only if failed'
+    //         mail body: "Project: ${env.JOB_NAME} - Build Number: ${env.BUILD_NUMBER} - URL de build: ${env.BUILD_URL}",
+    //             charset: 'UTF-8',
+    //             subject: "ERROR CI: Project name -> ${env.JOB_NAME}",
+    //             to: email
+    //     }
+    // }
+}

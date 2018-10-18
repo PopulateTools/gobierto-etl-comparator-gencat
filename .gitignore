@@ -1,0 +1,5 @@
+.env
+.rbenv-vars
+.ruby-gemset
+tmp/*
+!tmp/.keep
