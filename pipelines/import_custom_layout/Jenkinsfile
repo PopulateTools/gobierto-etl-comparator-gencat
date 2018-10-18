@@ -3,16 +3,16 @@ pipeline {
     agent any
     environment {
         COMPARATOR_GENCAT_ETL = "/var/www/gobierto-etl-comparator-gencat/current"
-        STORAGE_DIR = "/var/lib/jenkins/jobs/gobierto-etl-comparator gencat\\ layout/builds/${env.BUILD_NUMBER}/"
-        LOCALES = "ca" // change per "ca es en" when they are available
+        STORAGE_DIR = "/var/lib/jenkins/jobs/gobierto-etl-comparator-gencat\\ layout/builds/${env.BUILD_NUMBER}"
         LAYOUT_LOCATION = "http://www.transparenciacatalunya.cat/templates?mode=html&code=TCAT0001"
+        LOCALES = "ca" // change per "ca es en" when they are available
         // Variables that must be defined via Jenkins UI:
         // RAILS_ENV = "production"
     }
     stages {
         stage('Extract > Download layout') {
             steps {
-               sh "cd ${COMPARATOR_GENCAT_ETL}; ruby operations/import_custom_layout/download_layout.rb ${STORAGE_DIR} ${LAYOUT_LOCATION} '${LOCALES}'"
+               sh "cd ${COMPARATOR_GENCAT_ETL}; ruby operations/import_custom_layout/download_layout.rb '${STORAGE_DIR}' '${LAYOUT_LOCATION}' '${LOCALES}'"
             }
         }
         stage('Transform > Generate templates') {
