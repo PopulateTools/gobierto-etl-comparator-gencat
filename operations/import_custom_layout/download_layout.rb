@@ -23,6 +23,10 @@ LAYOUT_LOCATION = ARGV[1]
 LOCALES = ARGV[2..ARGV.length - 1]
 MIN_PAGE_SIZE = 10_000
 
+if ARGV.length < 3
+  raise "Incorrect number of arguments. Execute run.rb <local_storage_path> <layout_location> <locales>"
+end
+
 puts "[START] Download layout with STORAGE_DIR=#{STORAGE_DIR}, LAYOUT_LOCATION=#{LAYOUT_LOCATION}, LOCALES=#{LOCALES}"
 
 LOCALES.each do |locale|
