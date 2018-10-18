@@ -43,10 +43,13 @@ end
 layout_pages.each do |layout_page|
   footer_tag = layout_page.xpath("//div[contains(@class, 'fons_footer')]").first
   header_tag = layout_page.xpath("//div[contains(@class, 'contenidor')]").first
+  head_tag = layout_page.xpath("//head").first
+  head_content = head_tag.to_s.gsub(/<head>|<\/head>/, "")
 
   locales.each do |locale|
     File.write("#{LOCAL_STORAGE_PATH}/_footer_#{locale}.html.erb", footer_tag)
     File.write("#{LOCAL_STORAGE_PATH}/_header_#{locale}.html.erb", header_tag)
+    File.write("#{LOCAL_STORAGE_PATH}/_custom_head_content_#{locale}.html.erb", head_content)
   end
 end
 
