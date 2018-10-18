@@ -1,10 +1,14 @@
 # Gobierto Budgets Comparator ETL for GenCat
 
-ETL scripts for GenCat import of events, gifts, invitations and trips
+ETL scripts for GenCat budgets comparator for managing budgets data and loading the custom layout
 
 ## Setup
 
-> TODO
+Generate the `.env` file and complete its values:
+
+```bash
+cp .env.example .env
+```
 
 ## Available operations
 

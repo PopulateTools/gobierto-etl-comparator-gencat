@@ -14,7 +14,7 @@ Bundler.require
 #
 # Samples:
 #
-#   ruby $DEV_DIR/gobierto-etl-comparator-gencat/operations/import_custom_layout/generate_templates.rb $DEV_DIR/gobierto-etl-comparator-gencat/tmp/downloaded_layout.html $DEV_DIR/gobierto-etl-gencat/tmp
+#   ruby $DEV_DIR/gobierto-etl-comparator-gencat/operations/import_custom_layout/upload_templates.rb development $DEV_DIR/gobierto-etl-gencat/tmp
 #
 
 if ARGV.length != 2

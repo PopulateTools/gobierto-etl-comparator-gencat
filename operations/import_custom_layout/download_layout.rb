@@ -3,6 +3,21 @@
 require "bundler/setup"
 Bundler.require
 
+# Description:
+#
+#  Downloads the layout template from GenCat servers for the specified locales
+#
+# Arguments:
+#
+#  - 0: Local storage path
+#  - 1: Layout location, provided by GenCat
+#  - 2..n: Different locales of the layout that need to be retrieved
+#
+# Samples:
+#
+#   ruby $DEV_DIR/gobierto-etl-comparator-gencat/operations/import_custom_layout/download_layout.rb $DEV_DIR/gobierto-etl-gencat/tmp http://example.com en es ca
+#
+
 STORAGE_DIR = ARGV[0]
 LAYOUT_LOCATION = ARGV[1]
 LOCALES = ARGV[2..ARGV.length - 1]
