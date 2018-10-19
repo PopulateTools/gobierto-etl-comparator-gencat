@@ -1,7 +1,8 @@
-email = "popu-servers+jenkins@populate.tools "
+email = "popu-servers+jenkins@populate.tools"
 pipeline {
     agent any
     environment {
+        PATH = "/home/ubuntu/.rbenv/shims:$PATH"
         COMPARATOR_GENCAT_ETL = "/var/www/gobierto-etl-comparator-gencat/current"
         STORAGE_DIR = "/var/lib/jenkins/jobs/gobierto-etl-comparator-gencat\\ layout/builds/${env.BUILD_NUMBER}"
         LAYOUT_LOCATION = "http://www.transparenciacatalunya.cat/templates?mode=html&code=TCAT0001"
