@@ -46,10 +46,19 @@ layout_pages.each do |layout_page|
   head_tag = layout_page.xpath("//head").first
   head_content = head_tag.to_s.gsub(/<head>|<\/head>/, "")
 
+  files = [
+    { name_fragment: "_footer_", content: footer_tag },
+    { name_fragment: "_header_", content: header_tag },
+    { name_fragment: "_custom_head_content_", content: head_content }
+  ]
+
   locales.each do |locale|
-    File.write("#{LOCAL_STORAGE_PATH}/_footer_#{locale}.html.erb", footer_tag)
-    File.write("#{LOCAL_STORAGE_PATH}/_header_#{locale}.html.erb", header_tag)
-    File.write("#{LOCAL_STORAGE_PATH}/_custom_head_content_#{locale}.html.erb", head_content)
+    files.each do |file|
+      file_path = "#{LOCAL_STORAGE_PATH}/#{file[:name_fragment]}#{locale}.html.erb"
+      print "Writting #{file_path} ... "
+      bytes_written = File.write(file_path, file[:content])
+      puts "Wrote #{bytes_written} bytes"
+    end
   end
 end
 
