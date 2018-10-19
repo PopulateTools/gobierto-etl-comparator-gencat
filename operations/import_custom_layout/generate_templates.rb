@@ -25,6 +25,7 @@ if ARGV.length != 1
 end
 
 LOCAL_STORAGE_PATH = ARGV[0]
+JQUERY_LIB_REGEXP = /<script src=.*jquery.*><\/script>/
 
 puts "[START] Generate templates with LOCAL_STORAGE_PATH=#{LOCAL_STORAGE_PATH}"
 
@@ -45,6 +46,10 @@ layout_pages.each do |layout_page|
   header_tag = layout_page.xpath("//div[contains(@class, 'contenidor')]").first
   head_tag = layout_page.xpath("//head").first
   head_content = head_tag.to_s.gsub(/<head>|<\/head>/, "")
+
+  # comment incompatible version of jQuery
+  jquery_lib_line = head_content[JQUERY_LIB_REGEXP]
+  head_content.gsub!(jquery_lib_line, "<!-- #{jquery_lib_line} -->")
 
   files = [
     { name_fragment: "_footer_", content: footer_tag },
