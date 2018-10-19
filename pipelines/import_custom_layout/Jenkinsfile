@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Extract > Download layout') {
             steps {
-               sh "cd ${COMPARATOR_GENCAT_ETL}; ruby operations/import_custom_layout/download_layout.rb '${STORAGE_DIR}' '${LAYOUT_LOCATION}' '${LOCALES}'"
+               sh "cd ${COMPARATOR_GENCAT_ETL}; ruby operations/import_custom_layout/download_layout.rb ${STORAGE_DIR} '${LAYOUT_LOCATION}' '${LOCALES}'"
             }
         }
         stage('Transform > Generate templates') {
