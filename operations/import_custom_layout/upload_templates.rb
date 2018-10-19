@@ -30,7 +30,7 @@ puts "[START] Upload templates to S3 bucket with rails_env=#{rails_env}, directo
 S3_PREFFIX = "GOBIERTO_BUDGETS_COMPARATOR_GENCAT_"
 BUCKET_NAME = "gobierto-budgets-comparator-#{bucket_env}"
 UPLOADABLE_FILES = Dir.entries(directory).select do |entry|
-  entry =~ /^_(header|footer)_[a-z]{2}\.html\.erb$/
+  entry =~ /^_(header|footer|custom_head_content)_[a-z]{2}\.html\.erb$/
 end
 
 s3_client = Aws::S3::Client.new(
