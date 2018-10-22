@@ -1,0 +1,39 @@
+email = "popu-servers+jenkins@populate.tools"
+pipeline {
+    agent any
+    environment {
+        PATH = "/home/ubuntu/.rbenv/shims:$PATH"
+        COMPARATOR_GENCAT_ETL = "/var/www/gobierto-etl-comparator-gencat/current"
+        STORAGE_DIR = "/var/lib/jenkins/jobs/gobierto-etl-comparator-gencat\\ layout/builds/${env.BUILD_NUMBER}"
+        LAYOUT_LOCATION = "http://www.transparenciacatalunya.cat/templates?mode=html&code=TCAT0001"
+        LOCALES = "ca" // change per "ca es en" when they are available
+        // Variables that must be defined via Jenkins UI:
+        // RAILS_ENV = "production"
+    }
+    stages {
+        stage('Extract > Download layout') {
+            steps {
+               sh "cd ${COMPARATOR_GENCAT_ETL}; ruby operations/import_custom_layout/download_layout.rb ${STORAGE_DIR} '${LAYOUT_LOCATION}' '${LOCALES}'"
+            }
+        }
+        stage('Transform > Generate templates') {
+            steps {
+                sh "cd ${COMPARATOR_GENCAT_ETL}; ruby operations/import_custom_layout/generate_templates.rb ${STORAGE_DIR}"
+            }
+        }
+        stage('Load > Upload layout files to S3') {
+            steps {
+                sh "cd ${COMPARATOR_GENCAT_ETL}; ruby operations/import_custom_layout/upload_templates.rb ${RAILS_ENV} ${STORAGE_DIR}"
+            }
+        }
+    }
+    post {
+        failure {
+            echo 'This will run only if failed'
+            mail body: "Project: ${env.JOB_NAME} - Build Number: ${env.BUILD_NUMBER} - URL de build: ${env.BUILD_URL}",
+                charset: 'UTF-8',
+                subject: "ERROR CI: Project name -> ${env.JOB_NAME}",
+                to: email
+        }
+    }
+}
