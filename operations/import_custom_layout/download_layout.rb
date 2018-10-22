@@ -15,7 +15,7 @@ Bundler.require
 #
 # Samples:
 #
-#   ruby $DEV_DIR/gobierto-etl-comparator-gencat/operations/import_custom_layout/download_layout.rb $DEV_DIR/gobierto-etl-gencat/tmp http://example.com en es ca
+#   ruby $DEV_DIR/gobierto-etl-comparator-gencat/operations/import_custom_layout/download_layout.rb $DEV_DIR/gobierto-etl-comparator-gencat/tmp http://example.com es ca
 #
 
 STORAGE_DIR = ARGV[0]
