@@ -4,22 +4,23 @@ pipeline {
     environment {
         PATH = "/home/ubuntu/.rbenv/shims:$PATH"
         GOBIERTO_ETL_UTILS = "/var/www/gobierto-etl-utils/current"
-        COMPARATOR_GENCAT_ETL = "/var/www/gobierto-etl-comparator-gencat"
+        COMPARATOR_GENCAT_ETL = "/var/www/gobierto-etl-comparator-gencat/current"
         STORAGE_DIR = "/var/lib/jenkins/jobs/gobierto-etl-comparator-gencat\\ budgets_update/builds/${env.BUILD_NUMBER}"
         // Variables that must be defined via Jenkins UI:
         // RAILS_ENV = "production"
         // ELASTICSEARCH_URL = "http://localhost:9200"
         // BUDGETS_COMPARATOR_GENCAT = "/var/www/gobierto-budgets-comparator-gencat-staging/current"
+        // FAST_RUN = false
     }
     stages {
         stage("Extract/Load > Update budgets forecast since 31/12/2016") {
             steps {
-                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_forecast/update.rb 2016-12-31 ${STORAGE_DIR}"
+                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; FAST_RUN=${FAST_RUN} bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_forecast/update.rb 2016-12-31 ${STORAGE_DIR}"
             }
         }
         stage("Extract/Load > Update budgets execution since 31/12/2016") {
             steps {
-                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_execution/update.rb 2016-12-31 ${STORAGE_DIR}"
+                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; FAST_RUN=${FAST_RUN} bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_execution/update.rb 2016-12-31 ${STORAGE_DIR}"
             }
         }
         stage("Transform/Load > Update total budgets for 2016-2018 forecast data") {
