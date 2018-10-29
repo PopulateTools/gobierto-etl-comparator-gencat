@@ -10,11 +10,12 @@ require_relative "../utils/exec_summary"
 # Arguments:
 #
 #  - 0: Date from the one the changes will be retrieved, defaults to 2 days ago
+#  - 1: Directory for storing generated files
 #
 # Samples:
 #
 #  cd .../gobierto-budgets-comparator-gen-cat || cd .../gobierto-budgets-comparator
-#  bin/rails runner .../populate-data-indicators/private_data/gobierto_budgets_comparator/gencat/update_execution.rb 2017-03-15
+#  bin/rails runner .../populate-data-indicators/private_data/gobierto_budgets_comparator/gencat/update_execution.rb 2017-03-15 $DEV_DIR/gobierto-budgets-comparator-gen-cat/tmp
 #
 #  For faster imports in development: FAST_RUN=true bin/rails runner ...
 #
@@ -25,10 +26,11 @@ UPDATED_SINCE = if ARGV[0]
                 else
                   2.days.ago
                 end
+STORAGE_DIR = ARGV[1]
 
 exec_summary = ExecSummary.new
 
-puts "[START] gobierto_budgets_comparator/gencat/update_execution.rb  updated_since: #{UPDATED_SINCE}"
+puts "[START] gobierto_budgets_comparator/gencat/update_execution.rb  updated_since: #{UPDATED_SINCE} storage_dir: #{STORAGE_DIR}"
 puts "[!] Running with fast run" if (ENV["FAST_RUN"] == "true")
 
 client = SocrataClient.new
@@ -44,7 +46,7 @@ end
 
 exec_summary.finalize_summary
 
-File.open("scanned_organizations_ids.update_execution.txt", "w+") do |file|
+File.open("#{STORAGE_DIR}/scanned_organizations_ids.update_execution.txt", "w+") do |file|
   file.write exec_summary.scanned_organizations_ids.join("\n")
 end
 

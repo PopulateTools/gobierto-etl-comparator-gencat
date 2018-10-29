@@ -1,0 +1,53 @@
+email = "popu-servers+jenkins@populate.tools "
+pipeline {
+    agent any
+    environment {
+        PATH = "/home/ubuntu/.rbenv/shims:$PATH"
+        GOBIERTO_ETL_UTILS = "/var/www/gobierto-etl-utils/current"
+        COMPARATOR_GENCAT_ETL = "/var/www/gobierto-etl-comparator-gencat"
+        STORAGE_DIR = "/var/lib/jenkins/jobs/gobierto-etl-comparator-gencat\\ budgets_update/builds/${env.BUILD_NUMBER}"
+        // Variables that must be defined via Jenkins UI:
+        // RAILS_ENV = "production"
+        // ELASTICSEARCH_URL = "http://localhost:9200"
+        // BUDGETS_COMPARATOR_GENCAT = "/var/www/gobierto-budgets-comparator-gencat-staging/current"
+    }
+    stages {
+        stage("Extract/Load > Update budgets forecast since 31/12/2016") {
+            steps {
+                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_forecast/update.rb 2016-12-31 ${STORAGE_DIR}"
+            }
+        }
+        stage("Extract/Load > Update budgets execution since 31/12/2016") {
+            steps {
+                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_execution/update.rb 2016-12-31 ${STORAGE_DIR}"
+            }
+        }
+        stage("Transform/Load > Update total budgets for 2016-2018 forecast data") {
+            steps {
+                sh "cd ${GOBIERTO_ETL_UTILS}/operations/gobierto_budgets/update_total_budget/; ./run.rb '2016 2017 2018' ${STORAGE_DIR}/scanned_organizations_ids.update.txt"
+            }
+        }
+        stage("Transform/Load > Update total budgets for 2016-2018 execution data") {
+            steps {
+                sh "cd ${GOBIERTO_ETL_UTILS}/operations/gobierto_budgets/update_total_budget; ./run.rb '2016 2017 2018' ${STORAGE_DIR}/scanned_organizations_ids.update_execution.txt"
+            }
+        }
+        stage("Load > Re-calculate bubbles") {
+            steps {
+                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/generate_organizations_ids/run.rb ${STORAGE_DIR}"
+                sh "cd ${GOBIERTO_ETL_UTILS}; ruby operations/gobierto_budgets/bubbles/run.rb ${STORAGE_DIR}/organization_ids.txt"
+                sh "cd ${GOBIERTO_ETL_UTILS}; ruby operations/gobierto_budgets/bubbles/run.rb ${STORAGE_DIR}/entity_ids.txt"
+            }
+        }
+    }
+    post {
+        failure {
+            echo "This will run only if failed"
+            mail body: "Project: ${env.JOB_NAME} - Build Number: ${env.BUILD_NUMBER} - URL de build: ${env.BUILD_URL}",
+                charset: "UTF-8",
+                subject: "ERROR CI: Project name -> ${env.JOB_NAME}",
+                to: email
+
+        }
+    }
+}

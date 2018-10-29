@@ -120,13 +120,15 @@ class SocrataClient
   end
 
   def base_query(page)
-    query_hash = {
-      "$limit" => PAGE_SIZE,
-      #"codi_ens" => 801930008,  # For debugging (Ayto. Barcelona)
-      "$offset" => page * PAGE_SIZE
-    }
-    # set FAST_RUN to "true" to only import level 1 lines. This is useful for faster imports in development env
-    query_hash["nivell"] = 1 if (ENV["FAST_RUN"] == "true")
+    query_hash = { "$limit" => PAGE_SIZE, "$offset" => page * PAGE_SIZE }
+    # Set FAST_RUN to "true" to only import level 1 lines for 1 organization.
+    # This is useful for faster imports in development env
+    if ENV["FAST_RUN"] == "true"
+      query_hash.merge!(
+        "nivell" => 1,
+        "codi_ens" => 801930008, # Ayto. Barcelona
+      )
+    end
     query_hash
   end
 
