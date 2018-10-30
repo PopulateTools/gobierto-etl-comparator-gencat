@@ -16,32 +16,32 @@ pipeline {
     stages {
         stage('Extract > Download last start query date') {
             steps {
-                sh "s3cmd get s3://${BUCKET_NAME}/gencat/last_excecution_date.txt ${STORAGE_DIR}/last_excecution_date.txt --force"
+                sh "s3cmd get s3://${BUCKET_NAME}/gencat/last_excecution_date.txt ${STORAGE_DIR}/last_excecution_date.txt"
             }
         }
         stage("Extract/Load > Update budgets forecast since 31/12/2016") {
             steps {
-                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; FAST_RUN=${FAST_RUN} bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_forecast/update.rb \"$(< ${STORAGE_DIR}/last_excecution_date.txt)\" ${STORAGE_DIR}"
+                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; last_excecution_date=\$(cat ${STORAGE_DIR}/last_excecution_date.txt); FAST_RUN=${FAST_RUN} bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_forecast/update.rb \$last_excecution_date ${STORAGE_DIR}"
             }
         }
         stage("Extract/Load > Update budgets execution since 31/12/2016") {
             steps {
-                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; FAST_RUN=${FAST_RUN} bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_execution/update.rb \"$(< ${STORAGE_DIR}/last_excecution_date.txt)\" ${STORAGE_DIR}"
+                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; last_excecution_date=\$(cat ${STORAGE_DIR}/last_excecution_date.txt); FAST_RUN=${FAST_RUN} bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_execution/update.rb \$last_excecution_date ${STORAGE_DIR}"
             }
         }
         stage("Extract > Generate year arguments for updating total budgets") {
             steps {
-                sh "echo \"$(($(date +%Y)-1)) $(date +%Y)\" > ${STORAGE_DIR}/total_budgets_years.txt"
+                sh "echo \"\$((\$(date +%Y)-1)) \$(date +%Y)\" > ${STORAGE_DIR}/total_budgets_years.txt"
             }
         }
         stage("Transform/Load > Update total budgets for forecast data") {
             steps {
-                sh "cd ${GOBIERTO_ETL_UTILS}/operations/gobierto_budgets/update_total_budget/; ./run.rb \"$(< $STORAGE_DIR/total_budgets_years.txt)\" ${STORAGE_DIR}/scanned_organizations_ids.update.txt"
+                sh "cd ${GOBIERTO_ETL_UTILS}/operations/gobierto_budgets/update_total_budget/; total_budgets_years=\$(cat ${STORAGE_DIR}/total_budgets_years.txt); ./run.rb \"\$total_budgets_years\" ${STORAGE_DIR}/scanned_organizations_ids.update.txt"
             }
         }
         stage("Transform/Load > Update total budgets for execution data") {
             steps {
-                sh "cd ${GOBIERTO_ETL_UTILS}/operations/gobierto_budgets/update_total_budget; ./run.rb \"$(< $STORAGE_DIR/total_budgets_years.txt)\" ${STORAGE_DIR}/scanned_organizations_ids.update_execution.txt"
+                sh "cd ${GOBIERTO_ETL_UTILS}/operations/gobierto_budgets/update_total_budget; total_budgets_years=\$(cat ${STORAGE_DIR}/total_budgets_years.txt); ./run.rb \"\$total_budgets_years\" ${STORAGE_DIR}/scanned_organizations_ids.update_execution.txt"
             }
         }
         stage("Load > Re-calculate bubbles") {
