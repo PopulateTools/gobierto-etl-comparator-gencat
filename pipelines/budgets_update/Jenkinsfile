@@ -12,11 +12,19 @@ pipeline {
         // ELASTICSEARCH_URL = "http://localhost:9200"
         // BUDGETS_COMPARATOR_GENCAT = "/var/www/gobierto-budgets-comparator-gencat-staging/current"
         // FAST_RUN = false
+        // FORCE_FULL_IMPORT = false
     }
     stages {
         stage('Extract > Download last start query date') {
+            when { expression { params.FORCE_FULL_IMPORT != 'true' } }
             steps {
                 sh "s3cmd get s3://${BUCKET_NAME}/gencat/last_excecution_date.txt ${STORAGE_DIR}/last_excecution_date.txt"
+            }
+        }
+        stage('Extract > Generate last start query date') {
+            when { expression { params.FORCE_FULL_IMPORT == 'true' } }
+            steps {
+                sh "echo '2009-01-01' > ${STORAGE_DIR}/last_excecution_date.txt"
             }
         }
         stage("Extract/Load > Update budgets forecast") {
