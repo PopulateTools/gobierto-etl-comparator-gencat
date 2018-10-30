@@ -16,22 +16,6 @@ class SocrataClient
     )
   end
 
-  def create_budget_lines!(year, exec_summary, debug=false)
-    page = 0
-    response_items = request_items_page(page, year)
-
-    while response_items.any?
-      puts "[INFO] Processing items of page #{page} of year #{year}"
-      response_items.each_with_index do |item, index|
-        puts "[INFO] Processing item (\##{index}/#{response_items.size})"
-        ResponseItemProcessor.process!(ResponseItem.new(item), exec_summary, debug)
-      end
-
-      page += 1
-      response_items = request_items_page(page, year)
-    end
-  end
-
   def update_budget_lines!(previous_updated_at, exec_summary, debug=false)
     page = 0
     response_items = request_outdated_items_page(page, previous_updated_at)
