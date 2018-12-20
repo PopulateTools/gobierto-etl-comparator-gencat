@@ -1,0 +1,79 @@
+email = "popu-servers+jenkins@populate.tools "
+pipeline {
+    agent any
+    environment {
+        PATH = "/home/ubuntu/.rbenv/shims:$PATH"
+        GOBIERTO_ETL_UTILS = "/var/www/gobierto-etl-utils/current"
+        COMPARATOR_GENCAT_ETL = "/var/www/gobierto-etl-comparator-gencat/current"
+        STORAGE_DIR = "/var/lib/jenkins/jobs/gobierto-etl-comparator-gencat\\ budgets_update/builds/${env.BUILD_NUMBER}"
+        BUCKET_NAME = "gobierto-budgets-comparator-${RAILS_ENV}"
+        // Variables that must be defined via Jenkins UI:
+        // RAILS_ENV = "production"
+        // ELASTICSEARCH_URL = "http://localhost:9200"
+        // BUDGETS_COMPARATOR_GENCAT = "/var/www/gobierto-budgets-comparator-gencat-staging/current"
+        // FAST_RUN = false
+        // FORCE_FULL_IMPORT = false
+    }
+    stages {
+        stage('Extract > Download last start query date') {
+            when { expression { params.FORCE_FULL_IMPORT != 'true' } }
+            steps {
+                sh "s3cmd get s3://${BUCKET_NAME}/gencat/last_excecution_date.txt ${STORAGE_DIR}/last_excecution_date.txt"
+            }
+        }
+        stage('Extract > Generate last start query date') {
+            when { expression { params.FORCE_FULL_IMPORT == 'true' } }
+            steps {
+                sh "echo '2009-01-01' > ${STORAGE_DIR}/last_excecution_date.txt"
+            }
+        }
+        stage("Extract/Load > Update budgets forecast") {
+            steps {
+                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; last_excecution_date=\$(cat ${STORAGE_DIR}/last_excecution_date.txt); FAST_RUN=${FAST_RUN} bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_forecast/update.rb \$last_excecution_date ${STORAGE_DIR}"
+            }
+        }
+        stage("Extract/Load > Update budgets execution") {
+            steps {
+                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; last_excecution_date=\$(cat ${STORAGE_DIR}/last_excecution_date.txt); FAST_RUN=${FAST_RUN} bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_execution/update.rb \$last_excecution_date ${STORAGE_DIR}"
+            }
+        }
+        stage("Extract > Generate year arguments for updating total budgets") {
+            steps {
+                sh "echo \"\$((\$(date +%Y)-1)) \$(date +%Y)\" > ${STORAGE_DIR}/total_budgets_years.txt"
+            }
+        }
+        stage("Transform/Load > Update total budgets for forecast data") {
+            steps {
+                sh "cd ${GOBIERTO_ETL_UTILS}/operations/gobierto_budgets/update_total_budget/; total_budgets_years=\$(cat ${STORAGE_DIR}/total_budgets_years.txt); ./run.rb \"\$total_budgets_years\" ${STORAGE_DIR}/scanned_organizations_ids.update.txt"
+            }
+        }
+        stage("Transform/Load > Update total budgets for execution data") {
+            steps {
+                sh "cd ${GOBIERTO_ETL_UTILS}/operations/gobierto_budgets/update_total_budget; total_budgets_years=\$(cat ${STORAGE_DIR}/total_budgets_years.txt); ./run.rb \"\$total_budgets_years\" ${STORAGE_DIR}/scanned_organizations_ids.update_execution.txt"
+            }
+        }
+        stage("Load > Re-calculate bubbles") {
+            steps {
+                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/generate_organizations_ids/run.rb ${STORAGE_DIR}"
+                sh "cd ${GOBIERTO_ETL_UTILS}; ruby operations/gobierto_budgets/bubbles/run.rb ${STORAGE_DIR}/organization_ids.txt"
+                sh "cd ${GOBIERTO_ETL_UTILS}; ruby operations/gobierto_budgets/bubbles/run.rb ${STORAGE_DIR}/entity_ids.txt"
+            }
+        }
+        stage('Documentation > Upload last execution date') {
+            steps {
+                sh "echo `date +%Y-%m-%d` > ${STORAGE_DIR}/last_excecution_date.txt"
+                sh "s3cmd put ${STORAGE_DIR}/last_excecution_date.txt s3://${BUCKET_NAME}/gencat/last_excecution_date.txt"
+            }
+        }
+    }
+    post {
+        failure {
+            echo "This will run only if failed"
+            mail body: "Project: ${env.JOB_NAME} - Build Number: ${env.BUILD_NUMBER} - URL de build: ${env.BUILD_URL}",
+                charset: "UTF-8",
+                subject: "ERROR CI: Project name -> ${env.JOB_NAME}",
+                to: email
+
+        }
+    }
+}

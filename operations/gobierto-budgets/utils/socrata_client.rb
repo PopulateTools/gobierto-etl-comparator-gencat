@@ -16,22 +16,6 @@ class SocrataClient
     )
   end
 
-  def create_budget_lines!(year, exec_summary, debug=false)
-    page = 0
-    response_items = request_items_page(page, year)
-
-    while response_items.any?
-      puts "[INFO] Processing items of page #{page} of year #{year}"
-      response_items.each_with_index do |item, index|
-        puts "[INFO] Processing item (\##{index}/#{response_items.size})"
-        ResponseItemProcessor.process!(ResponseItem.new(item), exec_summary, debug)
-      end
-
-      page += 1
-      response_items = request_items_page(page, year)
-    end
-  end
-
   def update_budget_lines!(previous_updated_at, exec_summary, debug=false)
     page = 0
     response_items = request_outdated_items_page(page, previous_updated_at)
@@ -120,13 +104,15 @@ class SocrataClient
   end
 
   def base_query(page)
-    query_hash = {
-      "$limit" => PAGE_SIZE,
-      #"codi_ens" => 801930008,  # For debugging (Ayto. Barcelona)
-      "$offset" => page * PAGE_SIZE
-    }
-    # set FAST_RUN to "true" to only import level 1 lines. This is useful for faster imports in development env
-    query_hash["nivell"] = 1 if (ENV["FAST_RUN"] == "true")
+    query_hash = { "$limit" => PAGE_SIZE, "$offset" => page * PAGE_SIZE }
+    # Set FAST_RUN to "true" to only import level 1 lines for 1 organization.
+    # This is useful for faster imports in development env
+    if ENV["FAST_RUN"] == "true"
+      query_hash.merge!(
+        "nivell" => 1,
+        "codi_ens" => 801930008, # Ayto. Barcelona
+      )
+    end
     query_hash
   end
 
