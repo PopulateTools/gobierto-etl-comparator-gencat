@@ -9,7 +9,6 @@ pipeline {
         BUCKET_NAME = "gobierto-budgets-comparator-${RAILS_ENV}"
         // Variables that must be defined via Jenkins UI:
         // RAILS_ENV = "production"
-        // ELASTICSEARCH_URL = "http://localhost:9200"
         // BUDGETS_COMPARATOR_GENCAT = "/var/www/gobierto-budgets-comparator-gencat-staging/current"
         // FAST_RUN = false
         // FORCE_FULL_IMPORT = false
