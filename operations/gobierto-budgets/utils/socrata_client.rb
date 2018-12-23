@@ -5,7 +5,7 @@ require_relative "configuration"
 
 class SocrataClient
 
-  PAGE_SIZE = 2000
+  PAGE_SIZE = 20
   FORECAST_DATASET = "bhg2-qtnp"
   EXECUTION_DATASET = "qtcs-wv8y"
 
@@ -21,11 +21,14 @@ class SocrataClient
     response_items = request_outdated_items_page(page, previous_updated_at)
 
     while response_items.any?
+      threads = []
       response_items.each_with_index do |item, index|
         puts "[INFO] Processing item (\##{index}/#{response_items.size}) of page #{page}"
-        ResponseItemProcessor.process!(ResponseItem.new(item), exec_summary, debug)
+        threads << Thread.new do
+          ResponseItemProcessor.process!(ResponseItem.new(item), exec_summary, debug)
+        end
       end
-
+      threads.each(&:join)
       page += 1
       response_items = request_outdated_items_page(page, previous_updated_at)
     end
@@ -41,22 +44,26 @@ class SocrataClient
     while response_items.any?
       puts "[INFO] Processing page #{page} of exercise year #{exercise_year}"
 
+      threads = []
       response_items.each_with_index do |item, index|
-        execution_record = ExecutionRecord.new(item)
+        threads << Thread.new do
+          execution_record = ExecutionRecord.new(item)
 
-        exec_summary.organization_scanned!(execution_record.organization_id)
+          exec_summary.organization_scanned!(execution_record.organization_id)
 
-        if execution_record.exists?
-          operation = execution_record.outdated? ? execution_record.update_operation_attributes : nil
-        else
-          operation = execution_record.create_operation_attributes
-        end
+          if execution_record.exists?
+            operation = execution_record.outdated? ? execution_record.update_operation_attributes : nil
+          else
+            operation = execution_record.create_operation_attributes
+          end
 
-        if operation
-          operations << operation
-          operations_log.puts(operation)
+          if operation
+            operations << operation
+            operations_log.puts(operation)
+          end
         end
       end
+      threads.each(&:join)
 
       if operations.any?
         puts "[INFO] Performing  #{operations.size} operations of page #{page} of exercise year #{exercise_year}..."
