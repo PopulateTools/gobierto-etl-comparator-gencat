@@ -73,15 +73,6 @@ class SocrataClient
 
   private
 
-  def request_items_page(page, year)
-    puts "[INFO] Requesting page #{page} of year #{year}"
-
-    @client.get(FORECAST_DATASET, base_query(page).merge(
-      "any_exercici" => "#{year}-01-01T00:00:00.000",
-      "$where" => "import > 0"
-    ))
-  end
-
   def request_outdated_items_page(page, updated_at)
     @client.get(FORECAST_DATASET, base_query(page).merge(
       "$where" => "import > 0 AND :updated_at > '#{updated_at.strftime("%F")}'"
