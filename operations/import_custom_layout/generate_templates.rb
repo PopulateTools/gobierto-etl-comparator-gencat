@@ -60,9 +60,6 @@ layout_pages.each do |layout_page|
                    end
   end
 
-  # Remove OC lang
-  header_tag.css("ul.idioma a").select{ |link| link['title'] == 'oc' }.first.remove
-
   # comment incompatible version of jQuery
   jquery_lib_line = head_content[JQUERY_LIB_REGEXP]
   head_content.gsub!(jquery_lib_line, "<!-- #{jquery_lib_line} -->")
