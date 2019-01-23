@@ -4,6 +4,7 @@ require "bundler/setup"
 Bundler.require
 
 require "nokogiri"
+require "byebug"
 
 # Description:
 #
@@ -46,6 +47,20 @@ layout_pages.each do |layout_page|
   header_tag = layout_page.xpath("//div[contains(@class, 'contenidor')]").first
   head_tag = layout_page.xpath("//head").first
   head_content = head_tag.to_s.gsub(/<head>|<\/head>/, "")
+
+  # Update change locale
+  header_tag.css("ul.idioma a").each do |link|
+    link['href'] = if link['href'].include?("CA")
+                     "/locale/ca"
+                   elsif link['href'].include?("ES")
+                     "/locale/es"
+                   elsif link['href'].include?("EN")
+                     "/locale/en"
+                   end
+  end
+
+  # Remove OC lang
+  header_tag.css("ul.idioma a").select{ |link| link['title'] == 'oc' }.first.remove
 
   # comment incompatible version of jQuery
   jquery_lib_line = head_content[JQUERY_LIB_REGEXP]

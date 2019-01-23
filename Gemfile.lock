@@ -95,6 +95,7 @@ GEM
       loofah (~> 2.2, >= 2.2.2)
     rainbow (3.0.0)
     rake (12.3.2)
+    rb-readline (0.5.5)
     rubocop (0.63.1)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
@@ -128,6 +129,7 @@ DEPENDENCIES
   json
   nokogiri
   rake
+  rb-readline
   rubocop
   soda-ruby (~> 0.2.24)
 
