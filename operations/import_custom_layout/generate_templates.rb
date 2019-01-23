@@ -54,7 +54,9 @@ layout_pages.each do |layout_page|
                    elsif link['href'].include?("ES")
                      "/locale/es"
                    elsif link['href'].include?("EN")
-                     "/locale/en"
+                     "/locale/ca"
+                   elsif link['href'].include?("OC")
+                     "/locale/ca"
                    end
   end
 
