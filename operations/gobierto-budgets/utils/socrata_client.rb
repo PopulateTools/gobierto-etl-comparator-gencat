@@ -22,10 +22,9 @@ class SocrataClient
 
     while response_items.any?
       response_items.each_with_index do |item, index|
-        puts "[INFO] Processing item (\##{index}/#{response_items.size}) of page #{page}"
         ResponseItemProcessor.process!(ResponseItem.new(item), exec_summary, debug)
       end
-
+      puts "[INFO] Processing page #{page}"
       page += 1
       response_items = request_outdated_items_page(page, previous_updated_at)
     end
@@ -72,15 +71,6 @@ class SocrataClient
   end
 
   private
-
-  def request_items_page(page, year)
-    puts "[INFO] Requesting page #{page} of year #{year}"
-
-    @client.get(FORECAST_DATASET, base_query(page).merge(
-      "any_exercici" => "#{year}-01-01T00:00:00.000",
-      "$where" => "import > 0"
-    ))
-  end
 
   def request_outdated_items_page(page, updated_at)
     @client.get(FORECAST_DATASET, base_query(page).merge(

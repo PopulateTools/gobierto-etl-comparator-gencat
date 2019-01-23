@@ -14,4 +14,5 @@ gem "aws-sdk"
 group :development do
   gem "byebug"
   gem "rubocop"
+  gem "rb-readline"
 end

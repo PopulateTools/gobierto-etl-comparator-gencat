@@ -32,7 +32,7 @@ exec_summary = ExecSummary.new
 MAX_TRIES = 10
 tries = 0
 
-puts "[START] gobierto_budgets_comparator/gencat/update.rb  updated_since: #{UPDATED_SINCE} storage_dir: #{STORAGE_DIR}"
+puts "[START] gobierto_budgets_comparator/gencat/update.rb updated_since: #{UPDATED_SINCE} storage_dir: #{STORAGE_DIR}"
 puts "[!] Running with fast run" if (ENV["FAST_RUN"] == "true")
 
 begin
