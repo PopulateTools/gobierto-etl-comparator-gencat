@@ -30,7 +30,7 @@ class ResponseItem
 
   def initialize(response_data)
     rd = response_data
-    @client = GobiertoData::GobiertoBudgets::SearchEngine.client
+    @client = GobiertoData::GobiertoBudgets::SearchEngineWriting.client
 
     @response_data = rd
     @name = rd.nom_complert

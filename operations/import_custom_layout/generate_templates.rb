@@ -33,15 +33,13 @@ layout_files_names = Dir.entries(LOCAL_STORAGE_PATH).select do |entry|
   entry =~ /^downloaded_layout_[a-z]{2}\.html$/
 end
 
-locales = layout_files_names.map do |file_name|
-  file_name.gsub("downloaded_layout_", "").gsub(".html", "")
-end
+layout_files_names.map do |file_name|
+  locale = file_name.split("_").last.gsub(".html", "")
 
-layout_pages = layout_files_names.map do |file_name|
-  Nokogiri::HTML(open("#{LOCAL_STORAGE_PATH}/#{file_name}"))
-end
+  puts "Parsing file #{file_name}. Locale is #{locale}"
 
-layout_pages.each do |layout_page|
+  layout_page = Nokogiri::HTML(open("#{LOCAL_STORAGE_PATH}/#{file_name}"))
+
   footer_tag = layout_page.xpath("//div[contains(@class, 'fons_footer')]").first
   header_tag = layout_page.xpath("//div[contains(@class, 'contenidor')]").first
   head_tag = layout_page.xpath("//head").first
@@ -70,13 +68,11 @@ layout_pages.each do |layout_page|
     { name_fragment: "_custom_head_content_", content: head_content }
   ]
 
-  locales.each do |locale|
-    files.each do |file|
-      file_path = "#{LOCAL_STORAGE_PATH}/#{file[:name_fragment]}#{locale}.html.erb"
-      print "Writting #{file_path} ... "
-      bytes_written = File.write(file_path, file[:content])
-      puts "Wrote #{bytes_written} bytes"
-    end
+  files.each do |file|
+    file_path = "#{LOCAL_STORAGE_PATH}/#{file[:name_fragment]}#{locale}.html.erb"
+    print "Writting #{file_path} ... "
+    bytes_written = File.write(file_path, file[:content])
+    puts "Wrote #{bytes_written} bytes"
   end
 end
 
