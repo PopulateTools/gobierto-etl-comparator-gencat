@@ -20,6 +20,10 @@ require "nokogiri"
 #   ruby $DEV_DIR/gobierto-etl-comparator-gencat/operations/import_custom_layout/generate_templates.rb $DEV_DIR/gobierto-etl-gencat/tmp
 #
 
+def locale_available?(locale)
+  ["es", "ca"].include?(locale)
+end
+
 if ARGV.length != 1
   raise "Incorrect number of arguments. Execute run.rb <local_storage_path>"
 end
@@ -47,14 +51,12 @@ layout_files_names.map do |file_name|
 
   # Update change locale
   header_tag.css("ul.idioma a").each do |link|
+    link.remove unless locale_available?(link.text.downcase)
+
     link['href'] = if link['href'].include?("CA")
                      "/locale/ca"
                    elsif link['href'].include?("ES")
                      "/locale/es"
-                   elsif link['href'].include?("EN")
-                     "/locale/ca"
-                   elsif link['href'].include?("OC")
-                     "/locale/ca"
                    end
   end
 
