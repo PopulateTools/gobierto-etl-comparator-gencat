@@ -2,7 +2,7 @@ email = "popu-servers+jenkins@populate.tools "
 pipeline {
     agent any
     environment {
-        PATH = "/home/ubuntu/.rbenv/shims:$PATH"
+        PATH = "$HOME/.rbenv/shims:$PATH"
         GOBIERTO_ETL_UTILS = "/var/www/gobierto-etl-utils/current"
         COMPARATOR_GENCAT_ETL = "/var/www/gobierto-etl-comparator-gencat/current"
         STORAGE_DIR = "/var/lib/jenkins/jobs/gobierto-etl-comparator-gencat\\ budgets_update/builds/${env.BUILD_NUMBER}"
