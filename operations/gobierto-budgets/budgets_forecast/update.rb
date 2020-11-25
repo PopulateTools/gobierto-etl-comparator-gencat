@@ -35,33 +35,20 @@ tries = 0
 puts "[START] gobierto_budgets_comparator/gencat/update.rb updated_since: #{UPDATED_SINCE} storage_dir: #{STORAGE_DIR}"
 puts "[!] Running with fast run" if (ENV["FAST_RUN"] == "true")
 
-begin
-  puts "Starting try \##{tries + 1}"
+client = SocrataClient.new
 
-  client = SocrataClient.new
+client.update_budget_lines!(UPDATED_SINCE, exec_summary, DEBUG)
+exec_summary.finalize_summary
+exec_summary.print
 
-  client.update_budget_lines!(UPDATED_SINCE, exec_summary, DEBUG)
-rescue StandardError
-  puts $!
-  tries += 1
-  if tries < MAX_TRIES
-    sleep 60
-    retry
-  end
-  puts "\nExiting after #{tries} re-tries.....\n"
-ensure
-  exec_summary.finalize_summary
-  exec_summary.print
-
-  File.open("#{STORAGE_DIR}/imported_organizations_ids.update.txt", "w+") do |file|
-    file.write exec_summary.imported_organizations_ids.join("\n")
-  end
-
-  File.open("#{STORAGE_DIR}/scanned_organizations_ids.update.txt", "w+") do |file|
-    file.write exec_summary.scanned_organizations_ids.join("\n")
-  end
-
-  puts "[END] gobierto_budgets_comparator/gencat/update.rb"
-
-  exit exec_summary.success?
+File.open("#{STORAGE_DIR}/imported_organizations_ids.update.txt", "w+") do |file|
+  file.write exec_summary.imported_organizations_ids.join("\n")
 end
+
+File.open("#{STORAGE_DIR}/scanned_organizations_ids.update.txt", "w+") do |file|
+  file.write exec_summary.scanned_organizations_ids.join("\n")
+end
+
+puts "[END] gobierto_budgets_comparator/gencat/update.rb"
+
+exit exec_summary.success?
