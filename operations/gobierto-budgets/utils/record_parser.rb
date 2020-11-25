@@ -17,7 +17,11 @@ class RecordParser
   end
 
   def self.parse_year(response_item)
-    Date.parse(response_item.any_exercici).year
+    if response_item.any_exercici =~ /\d{4}/
+      response_item.any_exercici.to_i
+    else
+      Date.parse(response_item.any_exercici).year
+    end
   end
 
   def self.parse_external_entity_code(response_item)
