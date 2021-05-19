@@ -82,7 +82,7 @@ GEM
     minitest (5.14.4)
     multi_json (1.14.1)
     multipart-post (2.0.0)
-    nokogiri (1.11.0)
+    nokogiri (1.11.4)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     oj (3.10.6)
