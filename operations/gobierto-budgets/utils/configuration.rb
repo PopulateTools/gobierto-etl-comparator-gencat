@@ -1,4 +1,4 @@
-require "gobierto_data"
+require "gobierto_budgets_data"
 
 EXCLUDED_PLACES_IDS = [
   INE::Places::Place.find_by_slug("mataro").id,
