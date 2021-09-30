@@ -5,4 +5,4 @@ EXCLUDED_PLACES_IDS = [
   INE::Places::Place.find_by_slug("esplugues-de-llobregat").id
 ]
 
-ES_CLIENT = GobiertoData::GobiertoBudgets::SearchEngine.client
+ES_CLIENT = GobiertoBudgetsData::GobiertoBudgets::SearchEngine.client

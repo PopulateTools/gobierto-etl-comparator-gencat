@@ -3,7 +3,7 @@ require_relative "record_parser"
 
 class ResponseItem
 
-  ES_INDEX = GobiertoData::GobiertoBudgets::ES_INDEX_FORECAST
+  ES_INDEX = GobiertoBudgetsData::GobiertoBudgets::ES_INDEX_FORECAST
 
   class MissingAmount < StandardError; end
   class MissingPopulation < StandardError; end
@@ -30,7 +30,7 @@ class ResponseItem
 
   def initialize(response_data)
     rd = response_data
-    @client = GobiertoData::GobiertoBudgets::SearchEngineWriting.client
+    @client = GobiertoBudgetsData::GobiertoBudgets::SearchEngineWriting.client
 
     @response_data = rd
     @name = rd.nom_complert
