@@ -2,17 +2,17 @@ class RecordParser
 
   def self.parse_kind(response_item)
     if response_item.tipus_partida == "I"
-      GobiertoData::GobiertoBudgets::INCOME
+      GobiertoBudgetsData::GobiertoBudgets::INCOME
     else
-      GobiertoData::GobiertoBudgets::EXPENSE
+      GobiertoBudgetsData::GobiertoBudgets::EXPENSE
     end
   end
 
   def self.parse_area(response_item)
     if response_item.tipus_classif == "E"
-      GobiertoData::GobiertoBudgets::ECONOMIC_AREA_NAME
+      GobiertoBudgetsData::GobiertoBudgets::ECONOMIC_AREA_NAME
     else
-      GobiertoData::GobiertoBudgets::FUNCTIONAL_AREA_NAME
+      GobiertoBudgetsData::GobiertoBudgets::FUNCTIONAL_AREA_NAME
     end
   end
 

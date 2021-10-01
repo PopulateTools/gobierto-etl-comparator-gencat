@@ -1,8 +1,8 @@
 GIT
-  remote: https://github.com/PopulateTools/gobierto_data.git
-  revision: 8eccea7e0abbe1a47d34e563f64812a6df83b6fc
+  remote: https://github.com/PopulateTools/gobierto_budgets_data.git
+  revision: 17761ea394fdb07418ee89a751482da4c6ebdaaf
   specs:
-    gobierto_data (0.1.0)
+    gobierto_budgets_data (0.1.0)
       actionpack (>= 5.0.0.1)
       activesupport (>= 5.0.0)
       aws-sdk (~> 2.11, >= 2.11.45)
@@ -129,7 +129,7 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk
   byebug
-  gobierto_data!
+  gobierto_budgets_data!
   http2
   ine-places
   json
