@@ -5,7 +5,7 @@ pipeline {
         PATH = "$HOME/.rbenv/shims:$PATH"
         COMPARATOR_GENCAT_ETL = "/var/www/gobierto-etl-comparator-gencat/current"
         STORAGE_DIR = "/var/lib/jenkins/jobs/gobierto-etl-comparator-gencat\\ layout/builds/${env.BUILD_NUMBER}"
-        LAYOUT_LOCATION = "http://www.transparenciacatalunya.cat/templates?mode=html&code=TCAT0001"
+        LAYOUT_LOCATION = "https://www.transparenciacatalunya.cat/templates?mode=html&code=TCAT0001"
         LOCALES = "ca es en" // change per "ca es en" when they are available
         // Variables that must be defined via Jenkins UI:
         // RAILS_ENV = "production"

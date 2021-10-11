@@ -4,8 +4,8 @@ class ExecutionRecord
 
   include ActiveModel::Model
 
-  ES_INDEX  = ::GobiertoData::GobiertoBudgets::ES_INDEX_EXECUTED
-  ES_CLIENT = GobiertoData::GobiertoBudgets::SearchEngine.client
+  ES_INDEX  = ::GobiertoBudgetsData::GobiertoBudgets::ES_INDEX_EXECUTED
+  ES_CLIENT = GobiertoBudgetsData::GobiertoBudgets::SearchEngine.client
 
   attr_accessor(
     :response_item,
@@ -140,10 +140,10 @@ class ExecutionRecord
   end
 
   def elasticsearch_type
-    if area == GobiertoData::GobiertoBudgets::ECONOMIC_AREA_NAME
-      GobiertoData::GobiertoBudgets::ECONOMIC_BUDGET_TYPE
+    if area == GobiertoBudgetsData::GobiertoBudgets::ECONOMIC_AREA_NAME
+      GobiertoBudgetsData::GobiertoBudgets::ECONOMIC_BUDGET_TYPE
     else
-      GobiertoData::GobiertoBudgets::FUNCTIONAL_BUDGET_TYPE
+      GobiertoBudgetsData::GobiertoBudgets::FUNCTIONAL_BUDGET_TYPE
     end
   end
 
