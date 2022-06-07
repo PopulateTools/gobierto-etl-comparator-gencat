@@ -45,7 +45,7 @@ class ResponseItemProcessor
   def self.create_associated_entity(item, exec_summary)
     entity_attributes = item.attributes_for_associated_entity
 
-    return if GobiertoBudgets::AssociatedEntity.exists?(entity_attributes)
+    return if GobiertoBudgets::AssociatedEntity.exists?(entity_id: entity_attributes[:entity_id])
 
     new_entity = GobiertoBudgets::AssociatedEntity
 
