@@ -26,11 +26,11 @@ pipeline {
                 sh "echo '2009-01-01' > ${STORAGE_DIR}/last_excecution_date.txt"
             }
         }
-        // stage("Extract/Load > Update budgets forecast") {
-        //     steps {
-        //         sh "cd ${BUDGETS_COMPARATOR_GENCAT}; last_excecution_date=\$(cat ${STORAGE_DIR}/last_excecution_date.txt); FAST_RUN=${FAST_RUN} bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_forecast/update.rb \$last_excecution_date ${STORAGE_DIR}"
-        //     }
-        // }
+        stage("Extract/Load > Update budgets forecast") {
+            steps {
+                sh "cd ${BUDGETS_COMPARATOR_GENCAT}; last_excecution_date=\$(cat ${STORAGE_DIR}/last_excecution_date.txt); FAST_RUN=${FAST_RUN} bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_forecast/update.rb \$last_excecution_date ${STORAGE_DIR}"
+            }
+        }
         stage("Extract/Load > Update budgets execution") {
             steps {
                 sh "cd ${BUDGETS_COMPARATOR_GENCAT}; last_excecution_date=\$(cat ${STORAGE_DIR}/last_excecution_date.txt); FAST_RUN=${FAST_RUN} bin/rails runner ${COMPARATOR_GENCAT_ETL}/operations/gobierto-budgets/budgets_execution/update.rb \$last_excecution_date ${STORAGE_DIR}"
