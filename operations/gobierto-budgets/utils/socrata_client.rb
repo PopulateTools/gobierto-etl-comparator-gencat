@@ -7,7 +7,7 @@ class SocrataClient
 
   PAGE_SIZE = 2000
   FORECAST_DATASET = "bhg2-qtnp"
-  EXECUTION_DATASET = "qtcs-wv8y"
+  EXECUTION_DATASET = "8squ-bk4r"
 
   def initialize
     @client = SODA::Client.new(
