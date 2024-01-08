@@ -2,7 +2,7 @@
 
 set -e
 
-LAYOUT_LOCATION="https://www.transparenciacatalunya.cat/templates?mode=html&code=TCAT0001"
+LAYOUT_LOCATION="http://www.transparenciacatalunya.cat/templates?mode=html&code=TCAT0001"
 COMPARATOR_GENCAT_ETL=$DEV_DIR/gobierto-etl-comparator-gencat
 STORAGE_DIR=$DEV_DIR/gobierto-etl-comparator-gencat/tmp
 RAILS_ENV=development
