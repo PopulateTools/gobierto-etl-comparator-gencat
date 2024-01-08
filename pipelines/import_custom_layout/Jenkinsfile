@@ -1,6 +1,6 @@
 email = "popu-servers+jenkins@populate.tools"
 pipeline {
-    agent any
+    agent { label 'remote' }
     environment {
         PATH = "$HOME/.rbenv/shims:$PATH"
         COMPARATOR_GENCAT_ETL = "/var/www/gobierto-etl-comparator-gencat/current"
