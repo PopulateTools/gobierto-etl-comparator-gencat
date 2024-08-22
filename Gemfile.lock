@@ -148,7 +148,7 @@ GEM
     rake (13.1.0)
     rb-readline (0.5.5)
     regexp_parser (2.9.0)
-    rexml (3.3.3)
+    rexml (3.3.6)
       strscan
     rubocop (1.60.2)
       json (~> 2.3)
